@@ -1,4 +1,4 @@
-name: Deploy static content to Pages
+name: Deploy static content to GitHub Pages
 
 on:
   push:
@@ -21,14 +21,43 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
+
+      # Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'  # Specify the Python version for your project
+
+      # Install dependencies (ensure requirements.txt is available in your repo)
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Run Flask build process to generate static content
+      - name: Build static assets
+        run: |
+          # Assuming you are using Flask with a custom build or just want to deploy 'static' and 'templates' folders
+          mkdir build
+          cp -r static build/static
+          cp -r templates build/templates
+          
+          # You can add additional steps to preprocess or generate static assets as needed
+          # e.g., compile Sass/SCSS, minify JavaScript, etc.
+
+      # Set up GitHub Pages environment
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
+      # Upload static assets to GitHub Pages artifact
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'dist'  # Ensure the correct build folder is specified here
+          path: 'build'  # Upload the build directory containing static files
+
+      # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
