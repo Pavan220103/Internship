@@ -28,34 +28,34 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'  # Specify the Python version for your project
+          python-version: '3.x'
 
-      # Install dependencies (ensure requirements.txt is available in your repo)
+      # Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Run Flask build process to generate static content
+      # Build static assets
       - name: Build static assets
         run: |
-          # Assuming you are using Flask with a custom build or just want to deploy 'static' and 'templates' folders
           mkdir build
+          # Copy static and template files into the build directory
           cp -r static build/static
-          cp -r templates build/templates
-          
-          # You can add additional steps to preprocess or generate static assets as needed
-          # e.g., compile Sass/SCSS, minify JavaScript, etc.
+          cp -r templates build
+          # Ensure that index.html is copied to the root of the build folder (GitHub Pages needs it)
+          # If you have a custom index.html file, make sure it's in the templates folder and copied here
+          cp templates/index.html build/index.html
 
-      # Set up GitHub Pages environment
+      # Set up GitHub Pages
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      # Upload static assets to GitHub Pages artifact
+      # Upload the build directory containing the static files
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'build'  # Upload the build directory containing static files
+          path: 'build'  # Make sure 'build' contains index.html and other assets
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
