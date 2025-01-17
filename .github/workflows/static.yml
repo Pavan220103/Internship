@@ -44,8 +44,10 @@ jobs:
           cp -r static build/static
           cp -r templates build
           # Ensure that index.html is copied to the root of the build folder (GitHub Pages needs it)
-          # If you have a custom index.html file, make sure it's in the templates folder and copied here
           cp templates/index.html build/index.html
+
+          # Ensure that other assets (like images, JS, etc.) are included in the build directory
+          cp -r static/* build/static/
 
       # Set up GitHub Pages
       - name: Setup Pages
